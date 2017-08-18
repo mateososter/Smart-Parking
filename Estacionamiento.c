@@ -46,6 +46,11 @@
 #define True 		1
 #define False 		0
 
+#define msgDOC		""
+
+
+
+
 int flag;
 int pulse;
 
@@ -118,10 +123,11 @@ while (1){
 	}
 
 	LeeTarjeta(&nuevo_ID);
-	if(		strcmp()==){
+	if(strcmp(anterior_ID,nuevo_ID)!=0){
 
-		switch(){
-		case 	:
+		if(strcmp(nuevo_ID, "47CAA7F4")==0){
+
+		}
 
 
 		}
@@ -193,3 +199,5 @@ void SetPWM(int PWMval)
 			LPC_PWM1->MR3 = PWMval;
 			LPC_PWM1->LER = LER3_EN;
 		}
+
+void LeeTarjeta(char *id){}
