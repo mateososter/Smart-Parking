@@ -6,6 +6,7 @@
  */
 
 #include "pwm.h"
+#include "LPC17xx.h"
 
 void InitPWM()
 	{

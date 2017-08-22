@@ -26,11 +26,16 @@
 #define msgDOC		""
 #define msgDISC		""
 #define msgALU		""
+#define ALU			4
+#define DOC			2
+#define DISC		0
 
 int flag;
 int pulse;
 
 void LeeTarjeta(char*);
+void CerrarBarrera();
+void RefrescarLuces();
 
 int main(void) {
 
@@ -50,8 +55,29 @@ int main(void) {
 	 * 	EN p2.1 (J6-43)	 												*/
 	/* Configuración del GPIO P0.18 como entrada */
 	Chip_GPIO_SetPinDIRInput(LPC_GPIO, GPIOINT_PORT0, 18);
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, GPIOINT_PORT0, 15);
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, GPIOINT_PORT0, 16);
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, GPIOINT_PORT0, 23);
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, GPIOINT_PORT0, 24);
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, GPIOINT_PORT0, 25);
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, GPIOINT_PORT0, 26);
+
 	/* Configuración de la interrupción por flanco descendente */
 	Chip_GPIOINT_SetIntFalling(LPC_GPIOINT, GPIOINT_PORT0, 1 << 18);
+	/* Configuración de las GPIO como salidas */
+	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 30);
+	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 31);
+	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 2);
+	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 3);
+	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 21);
+	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 22);
+	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 27);
+	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 28);
+	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 13);
+	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 4);
+	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 5);
+	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 11);
+	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 10);
 
 	/*	===================================================================	*
 	 *	Habilitamos las interrupciones e inicializamos el display			*
@@ -89,7 +115,7 @@ while (1){
 		if(strcmp(nuevo_ID, "47CAA7F4")==0){
 			estaLibre=BuscarLugar();
 			Iluminar(estaLibre);
-			MostrarMensaje(DISCAP);
+			MostrarMensaje(DISC);
 			AbrirBarrera();
 			MostrarMensaje(STDBY);
 
@@ -103,23 +129,9 @@ while (1){
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
+	/*	===================================================================	*
+	 *	Definición de funciones												*
+	 *	===================================================================	*/
 
 void EINT3_IRQHandler (void)
 {
@@ -130,6 +142,13 @@ void EINT3_IRQHandler (void)
 		flag=1;}
 }
 
+void CerrarBarrera(){
+	InitPWM();
+}
+
+void RefrescarLuces(){
+
+}
 void LeeTarjeta(char *id){
 
 }
