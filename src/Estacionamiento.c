@@ -26,16 +26,32 @@
 #define msgDOC		""
 #define msgDISC		""
 #define msgALU		""
-#define ALU			4
-#define DOC			2
-#define DISC		0
+#define NOLUG		10
+#define COMPL		8
+#define STDBY		6
+#define ALU			4 //Puestos 4 y 5 corresponden a ALU
+#define DOC			2 //Puestos 2 y 3 corresponden a DOC
+#define DISC		0 //Puestos 0 y 1 corresponden a DISC
 
 int flag;
 int pulse;
+int puesto[6];
+long tim;
+
+void delay(int);
+void CerrarBarrera();
+void AbrirBarrera();
+void RefrescarSensores();
+void RefrescarLuces();
+void MostrarMensajeStdBy();
+void MostrarMensaje(int);
+int BuscarLugar(int);
+void Iluminar(int);
+
 
 void LeeTarjeta(char*);
-void CerrarBarrera();
-void RefrescarLuces();
+
+
 
 int main(void) {
 
@@ -53,18 +69,23 @@ int main(void) {
 	 * 	D7 p2.8 (J6-50)
 	 * 	RS p2.0 (J6-42)
 	 * 	EN p2.1 (J6-43)	 												*/
-	/* Configuración del GPIO P0.18 como entrada */
-	Chip_GPIO_SetPinDIRInput(LPC_GPIO, GPIOINT_PORT0, 18);
-	Chip_GPIO_SetPinDIRInput(LPC_GPIO, GPIOINT_PORT0, 15);
-	Chip_GPIO_SetPinDIRInput(LPC_GPIO, GPIOINT_PORT0, 16);
-	Chip_GPIO_SetPinDIRInput(LPC_GPIO, GPIOINT_PORT0, 23);
-	Chip_GPIO_SetPinDIRInput(LPC_GPIO, GPIOINT_PORT0, 24);
-	Chip_GPIO_SetPinDIRInput(LPC_GPIO, GPIOINT_PORT0, 25);
-	Chip_GPIO_SetPinDIRInput(LPC_GPIO, GPIOINT_PORT0, 26);
+	/* Configuración de las entradas */
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 18);
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 15);
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 16);
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 23);
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 24);
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 25);
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 26);
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 13);
 
 	/* Configuración de la interrupción por flanco descendente */
 	Chip_GPIOINT_SetIntFalling(LPC_GPIOINT, GPIOINT_PORT0, 1 << 18);
-	/* Configuración de las GPIO como salidas */
+
+	/* Configuración de las GPIO como salidas
+	 *P0[2],	*P0[3],	 	*P0[21],	*P0[22],	*P0[27],	*P0[28] 	LED VERDES
+	 *P0[4],	*P0[5],		*P0[10], 	*P0[11], 	*P1[30], 	*P1[31]		LED ROJOS
+	 */
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 30);
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 31);
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 2);
@@ -95,30 +116,35 @@ int main(void) {
 	LCD_SendInstruction(LCD_DISPLAY_CLEAR);
 
 	// Defino las variables a utilizar
-	int puesto[6];
-	int estaLibre;
+
+	int estaLibre=0;
 	char nuevo_ID[8];
 	char anterior_ID[8];
 
+
 	CerrarBarrera();
+	RefrescarSensores();
 	RefrescarLuces();
+	MostrarMensajeStdBy();
 
 while (1){
 
-	for(i=0;i<8;i++){
+	for(int i=0;i<8;i++){
 		anterior_ID[i]=nuevo_ID[i];
 	}
 
 	LeeTarjeta(nuevo_ID);
 	if(strcmp(anterior_ID,nuevo_ID)!=0){
 
-		if(strcmp(nuevo_ID, "47CAA7F4")==0){
-			estaLibre=BuscarLugar();
-			Iluminar(estaLibre);
-			MostrarMensaje(DISC);
-			AbrirBarrera();
-			MostrarMensaje(STDBY);
-
+		if(strcmp(nuevo_ID, "47CAA7F4")==0){		//ID correspondiente a un discapacitado
+			RefrescarSensores();
+			estaLibre=BuscarLugar(DISC);
+			if (estaLibre!=10){
+				MostrarMensaje(estaLibre);
+				AbrirBarrera();
+				Iluminar(estaLibre);
+				MostrarMensajeStdBy();
+			}
 		}
 
 
@@ -133,6 +159,13 @@ while (1){
 	 *	Definición de funciones												*
 	 *	===================================================================	*/
 
+void delay(int time){
+	SystemCoreClockUpdate();
+	SysTick_Config(SystemCoreClock/1000);//Hace que cada 1 ms interrumpa
+	tim=time;
+	while (tim){	}
+}
+
 void EINT3_IRQHandler (void)
 {
 	/* Toggleo el LED si hubo un flanco descendente en el GPIO P0.18 */
@@ -146,9 +179,186 @@ void CerrarBarrera(){
 	InitPWM();
 }
 
+void AbrirBarrera(){
+	int sensorBarrera;
+	SetPWM(20);
+	sensorBarrera= Chip_GPIO_GetPinState(LPC_GPIO, 2, 13);
+	while(sensorBarrera==1){
+		delay(500);
+		sensorBarrera= Chip_GPIO_GetPinState(LPC_GPIO, 2, 13);
+	}
+	while(sensorBarrera==0){
+		delay(500);
+		sensorBarrera= Chip_GPIO_GetPinState(LPC_GPIO, 2, 13);
+	}
+
+	delay(500);
+	SetPWM(15);
+
+}
+void RefrescarSensores(){
+
+	puesto[0]= Chip_GPIO_GetPinState(LPC_GPIO, 0, 15);
+	puesto[1]= Chip_GPIO_GetPinState(LPC_GPIO, 0, 16);
+	puesto[2]= Chip_GPIO_GetPinState(LPC_GPIO, 0, 23);
+	puesto[3]= Chip_GPIO_GetPinState(LPC_GPIO, 0, 24);
+	puesto[4]= Chip_GPIO_GetPinState(LPC_GPIO, 0, 25);
+	puesto[5]= Chip_GPIO_GetPinState(LPC_GPIO, 0, 26);
+}
+
 void RefrescarLuces(){
 
+	if (puesto[0]){
+		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 2); //Enciende LED verde
+	} else {
+		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 4); //Enciende LED rojo
+	}
+
+	if (puesto[1]){
+		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 3);
+	} else {
+		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 5);
+	}
+
+	if (puesto[2]){
+		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 21);
+	} else {
+		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 10);
+	}
+
+	if (puesto[3]){
+		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 22);
+	} else {
+		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 11);
+	}
+
+	if (puesto[4]){
+		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 27);
+	} else {
+		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 1, 30);
+	}
+
+	if (puesto[5]){
+		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 28);
+	} else {
+		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 1, 31);
+	}
+}
+
+void MostrarMensajeStdBy(){
+
+	int libres=0;
+	for (int i=0;i<6;i++){
+		if (puesto[i]){
+			libres++;
+		}
+	}
+	LCD_SendInstruction(LCD_DISPLAY_CLEAR);
+	LCD_GoToxy(0,0);
+	LCD_Print(" HAY LUGARES:");
+	LCD_GoToxy(0, 15);
+	LCD_SendChar((char)libres);
+}
+
+void MostrarMensaje(int lugar){
+
+	if (lugar<=5) {
+		LCD_SendInstruction(LCD_DISPLAY_CLEAR);
+		LCD_GoToxy(0,0);
+		LCD_Print("BIENVENIDO");
+		LCD_GoToxy(1, 0);
+		LCD_Print("PASE AL LUGAR:");
+		LCD_GoToxy(1, 15);
+		LCD_SendChar((char)lugar);
+	}
+}
+
+int BuscarLugar(int condicion){
+
+	int lugar=10, i;			//A lugar le doy el valor 10 pero podría haberle dado cualquier valor distinto de 0...5
+	switch(condicion){
+	case DISC:
+		i=0;
+		break;
+	case DOC:
+		i=2;
+		break;
+	case ALU:
+		i=4;
+		break;
+	}
+	while(lugar==10||i<6){		//i<6 para que de una vuelta por el vector y salga. lugar=10 para que cuando encuentre el primer valor salga.
+		if(puesto[i]){
+			lugar=i;
+		} else {
+			i++;
+		}
+	}
+	return lugar;
+}
+
+void Iluminar(int lugar){
+	switch(lugar){
+	case 0:
+		while(puesto[0]==0){
+			Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 2);
+			delay(500);
+			Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 2);
+			delay(500);
+			RefrescarSensores();
+		}
+		break;
+	case 1:
+		while(puesto[1]==0){
+			Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 3);
+			delay(500);
+			Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 3);
+			delay(500);
+			RefrescarSensores();
+		}
+		break;
+	case 2:
+		while(puesto[2]==0){
+			Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 21);
+			delay(500);
+			Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 21);
+			delay(500);
+			RefrescarSensores();
+		}
+		break;
+	case 3:
+		while(puesto[3]==0){
+			Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 22);
+			delay(500);
+			Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 22);
+			delay(500);
+			RefrescarSensores();
+		}
+		break;
+	case 4:
+		while(puesto[4]==0){
+			Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 27);
+			delay(500);
+			Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 27);
+			delay(500);
+			RefrescarSensores();
+		}
+		break;
+	case 5:
+		while(puesto[5]==0){
+			Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 28);
+			delay(500);
+			Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 28);
+			delay(500);
+			RefrescarSensores();
+		}
+		break;
+	}
 }
 void LeeTarjeta(char *id){
 
+}
+
+void SysTick_Handler(void){
+	if(tim) tim--;
 }

@@ -44,7 +44,8 @@ src/Estacionamiento.o src/Estacionamiento.d: ../src/Estacionamiento.c \
  C:\Users\INTI\Documents\MCUXpressoIDE_10.0.0_344\workspace\CMSIS_CORE_LPC17xx\inc/LPC17xx.h \
  C:\Users\INTI\Documents\MCUXpressoIDE_10.0.0_344\workspace\CMSIS_CORE_LPC17xx\inc/core_cm3.h \
  C:\Users\INTI\Documents\MCUXpressoIDE_10.0.0_344\workspace\CMSIS_CORE_LPC17xx\inc/system_LPC17xx.h \
- C:\Users\INTI\Documents\MCUXpressoIDE_10.0.0_344\workspace\libLCD\inc/lcd.h
+ C:\Users\INTI\Documents\MCUXpressoIDE_10.0.0_344\workspace\libLCD\inc/lcd.h \
+ C:\Users\INTI\Documents\MCUXpressoIDE_10.0.0_344\workspace\Estacionamiento\inc/pwm.h
 
 C:\Users\INTI\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_chip_175x_6x\inc/chip.h:
 
@@ -137,3 +138,5 @@ C:\Users\INTI\Documents\MCUXpressoIDE_10.0.0_344\workspace\CMSIS_CORE_LPC17xx\in
 C:\Users\INTI\Documents\MCUXpressoIDE_10.0.0_344\workspace\CMSIS_CORE_LPC17xx\inc/system_LPC17xx.h:
 
 C:\Users\INTI\Documents\MCUXpressoIDE_10.0.0_344\workspace\libLCD\inc/lcd.h:
+
+C:\Users\INTI\Documents\MCUXpressoIDE_10.0.0_344\workspace\Estacionamiento\inc/pwm.h:
