@@ -37,6 +37,7 @@ int flag;
 int pulse;
 int puesto[6];
 long tim;
+char nuevo_ID[8]={0,0,0,0,0,0,0,0};
 
 void delay(int);
 void CerrarBarrera();
@@ -47,9 +48,7 @@ void MostrarMensajeStdBy();
 void MostrarMensaje(int);
 int BuscarLugar(int);
 void Iluminar(int);
-
-
-void LeeTarjeta(char*);
+void LeeTarjeta();
 
 
 
@@ -118,7 +117,6 @@ int main(void) {
 	// Defino las variables a utilizar
 
 	int estaLibre=0;
-	char nuevo_ID[8];
 	char anterior_ID[8];
 
 
@@ -133,7 +131,7 @@ while (1){
 		anterior_ID[i]=nuevo_ID[i];
 	}
 
-	LeeTarjeta(nuevo_ID);
+	LeeTarjeta();
 	if(strcmp(anterior_ID,nuevo_ID)!=0){
 
 		if(strcmp(nuevo_ID, "47CAA7F4")==0){		//ID correspondiente a un discapacitado
@@ -301,61 +299,56 @@ void Iluminar(int lugar){
 	switch(lugar){
 	case 0:
 		while(puesto[0]==0){
-			Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 2);
-			delay(500);
-			Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 2);
+			Chip_GPIO_SetPinToggle(LPC_GPIO, 0, 2);
 			delay(500);
 			RefrescarSensores();
 		}
 		break;
 	case 1:
 		while(puesto[1]==0){
-			Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 3);
-			delay(500);
-			Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 3);
+			Chip_GPIO_SetPinToggle(LPC_GPIO, 0, 3);
 			delay(500);
 			RefrescarSensores();
 		}
 		break;
 	case 2:
 		while(puesto[2]==0){
-			Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 21);
-			delay(500);
-			Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 21);
+			Chip_GPIO_SetPinToggle(LPC_GPIO, 0, 21);
 			delay(500);
 			RefrescarSensores();
 		}
 		break;
 	case 3:
 		while(puesto[3]==0){
-			Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 22);
-			delay(500);
-			Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 22);
+			Chip_GPIO_SetPinToggle(LPC_GPIO, 0, 22);
 			delay(500);
 			RefrescarSensores();
 		}
 		break;
 	case 4:
 		while(puesto[4]==0){
-			Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 27);
-			delay(500);
-			Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 27);
+			Chip_GPIO_SetPinToggle(LPC_GPIO, 0, 27);
 			delay(500);
 			RefrescarSensores();
 		}
 		break;
 	case 5:
 		while(puesto[5]==0){
-			Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 28);
-			delay(500);
-			Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 28);
+			Chip_GPIO_SetPinToggle(LPC_GPIO, 0, 28);
 			delay(500);
 			RefrescarSensores();
 		}
 		break;
 	}
 }
-void LeeTarjeta(char *id){
+void LeeTarjeta( ){
+
+	Chip_UART_Init(UART_SELECTION);
+	Chip_UART_SetBaud(UART_SELECTION, 9600);
+	Chip_UART_ConfigData(UART_SELECTION, (UART_LCR_WLEN8 | UART_LCR_SBS_1BIT));
+	Chip_UART_SetupFIFOS(UART_SELECTION, (UART_FCR_FIFO_EN | UART_FCR_TRG_LEV2));
+	Chip_UART_TXEnable(UART_SELECTION);
+
 
 }
 
