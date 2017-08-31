@@ -15,6 +15,7 @@
 #include "lcd.h"
 #include "string.h"
 #include "pwm.h"
+#include "uart.h"
 
 // TODO: insert other include files here
 
@@ -23,9 +24,6 @@
 
 #define True 		1
 #define False 		0
-#define msgDOC		""
-#define msgDISC		""
-#define msgALU		""
 #define NOLUG		10
 #define COMPL		8
 #define STDBY		6
@@ -144,11 +142,40 @@ while (1){
 				MostrarMensajeStdBy();
 			}
 		}
-
-
+		if(strcmp(nuevo_ID, "47CAA7F4")==0){		//ID correspondiente a un docente
+			RefrescarSensores();
+			estaLibre=BuscarLugar(DOC);
+			if (estaLibre!=10){
+				MostrarMensaje(estaLibre);
+				AbrirBarrera();
+				Iluminar(estaLibre);
+				MostrarMensajeStdBy();
+			}
+		}
+		if(strcmp(nuevo_ID, "47CAA7F4")==0){		//ID correspondiente a un alumno
+			RefrescarSensores();
+			estaLibre=BuscarLugar(ALU);
+			if (estaLibre!=10){
+				MostrarMensaje(estaLibre);
+				AbrirBarrera();
+				Iluminar(estaLibre);
+				MostrarMensajeStdBy();
+			}
+		}
+		if(strcmp(nuevo_ID, "47CAA7F4")==0){		//ID correspondiente a un discapacitado
+			RefrescarSensores();
+			estaLibre=BuscarLugar(DISC);
+			if (estaLibre!=10){
+				MostrarMensaje(estaLibre);
+				AbrirBarrera();
+				Iluminar(estaLibre);
+				MostrarMensajeStdBy();
+			}
 		}
 
 	}
+
+}
 
 
 }
@@ -343,13 +370,11 @@ void Iluminar(int lugar){
 }
 void LeeTarjeta( ){
 
-	Chip_UART_Init(UART_SELECTION);
-	Chip_UART_SetBaud(UART_SELECTION, 9600);
-	Chip_UART_ConfigData(UART_SELECTION, (UART_LCR_WLEN8 | UART_LCR_SBS_1BIT));
-	Chip_UART_SetupFIFOS(UART_SELECTION, (UART_FCR_FIFO_EN | UART_FCR_TRG_LEV2));
-	Chip_UART_TXEnable(UART_SELECTION);
-
-
+	int i;
+	uart_init(9600);
+	for(i=0;i<9;i++)
+		nuevo_ID[i]=uart_RxChar();
+	delay(10);
 }
 
 void SysTick_Handler(void){

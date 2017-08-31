@@ -2,7 +2,17 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-USER_OBJS :=
+OBJ_SRCS := 
+S_SRCS := 
+ASM_SRCS := 
+C_SRCS := 
+S_UPPER_SRCS := 
+O_SRCS := 
+OBJS := 
+ARCHIVES := 
+C_DEPS := 
 
-LIBS := -llibLCD -lCMSIS_CORE_LPC17xx -llpc_board_nxp_lpcxpresso_1769 -llpc_chip_175x_6x
+# Every subdirectory with source files must be described here
+SUBDIRS := \
+src \
 
