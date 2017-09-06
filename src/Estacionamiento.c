@@ -84,18 +84,31 @@ int main(void) {
 	 *P0[4],	*P0[5],		*P0[10], 	*P0[11], 	*P1[30], 	*P1[31]		LED ROJOS
 	 */
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 30);
+	Chip_GPIO_SetPinOutHigh(LPC_GPIO, 1, 30);
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 31);
+	Chip_GPIO_SetPinOutHigh(LPC_GPIO, 1, 31);
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 2);
+	Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 2);
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 3);
+	Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 3);
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 21);
+	Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 21);
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 22);
+	Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 22);
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 27);
+	Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 27);
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 28);
+	Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 28);
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 13);
+	Chip_GPIO_SetPinOutHigh(LPC_GPIO, 2, 13);
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 4);
+	Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 4);
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 5);
+	Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 5);
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 11);
+	Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 11);
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 10);
+	Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 10);
 
 	/*	===================================================================	*
 	 *	Habilitamos las interrupciones e inicializamos el display			*
@@ -132,7 +145,7 @@ while (1){
 	LeeTarjeta();
 	if(strcmp(anterior_ID,nuevo_ID)!=0){
 
-		if(strcmp(nuevo_ID, "47CAA7F4")==0){		//ID correspondiente a un discapacitado
+		if((strcmp(nuevo_ID, "47CAA7F4")==0)||(strcmp(nuevo_ID, "DC13433C")==0)){		//ID correspondiente a un discapacitado
 			RefrescarSensores();
 			estaLibre=BuscarLugar(DISC);
 			if (estaLibre!=10){
@@ -142,7 +155,7 @@ while (1){
 				MostrarMensajeStdBy();
 			}
 		}
-		if(strcmp(nuevo_ID, "47CAA7F4")==0){		//ID correspondiente a un docente
+		if((strcmp(nuevo_ID, "CCAB423C")==0)||(strcmp(nuevo_ID, "5C82443C")==0)){		//ID correspondiente a un docente
 			RefrescarSensores();
 			estaLibre=BuscarLugar(DOC);
 			if (estaLibre!=10){
@@ -152,7 +165,7 @@ while (1){
 				MostrarMensajeStdBy();
 			}
 		}
-		if(strcmp(nuevo_ID, "47CAA7F4")==0){		//ID correspondiente a un alumno
+		if(strcmp(nuevo_ID, "8AAA6032")==0){		//ID correspondiente a un alumno
 			RefrescarSensores();
 			estaLibre=BuscarLugar(ALU);
 			if (estaLibre!=10){
@@ -162,17 +175,6 @@ while (1){
 				MostrarMensajeStdBy();
 			}
 		}
-		if(strcmp(nuevo_ID, "47CAA7F4")==0){		//ID correspondiente a un discapacitado
-			RefrescarSensores();
-			estaLibre=BuscarLugar(DISC);
-			if (estaLibre!=10){
-				MostrarMensaje(estaLibre);
-				AbrirBarrera();
-				Iluminar(estaLibre);
-				MostrarMensajeStdBy();
-			}
-		}
-
 	}
 
 }
@@ -234,39 +236,51 @@ void RefrescarSensores(){
 void RefrescarLuces(){
 
 	if (puesto[0]){
-		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 2); //Enciende LED verde
+		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 4); 	//Apaga LED rojo
+		Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 2);		//Enciende LED verde
 	} else {
-		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 4); //Enciende LED rojo
+		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 2); 	//Apaga LED verde
+		Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 4);		//Enciende LED rojo
 	}
 
 	if (puesto[1]){
-		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 3);
-	} else {
 		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 5);
+		Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 3);
+	} else {
+		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 3);
+		Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 5);
 	}
 
 	if (puesto[2]){
-		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 21);
-	} else {
 		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 10);
+		Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 21);
+	} else {
+		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 21);
+		Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 10);
 	}
 
 	if (puesto[3]){
-		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 22);
-	} else {
 		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 11);
+		Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 22);
+	} else {
+		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 22);
+		Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 11);
 	}
 
 	if (puesto[4]){
-		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 27);
-	} else {
 		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 1, 30);
+		Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 27);
+	} else {
+		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 27);
+		Chip_GPIO_SetPinOutLow(LPC_GPIO, 1, 30);
 	}
 
 	if (puesto[5]){
-		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 28);
-	} else {
 		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 1, 31);
+		Chip_GPIO_SetPinOutLow(LPC_GPIO, 0, 28);
+	} else {
+		Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 28);
+		Chip_GPIO_SetPinOutLow(LPC_GPIO, 1, 31);
 	}
 }
 
@@ -303,13 +317,13 @@ int BuscarLugar(int condicion){
 	int lugar=10, i;			//A lugar le doy el valor 10 pero podría haberle dado cualquier valor distinto de 0...5
 	switch(condicion){
 	case DISC:
-		i=0;
+		i=0; //Del cero en adelante los pueden ocupar los discapacitados
 		break;
 	case DOC:
-		i=2;
+		i=2; //Del 2 en adelante lo pueden ocupar los docentes
 		break;
 	case ALU:
-		i=4;
+		i=4; //A partir del 4 quedan para los alumnos
 		break;
 	}
 	while(lugar==10||i<6){		//i<6 para que de una vuelta por el vector y salga. lugar=10 para que cuando encuentre el primer valor salga.
