@@ -24,18 +24,22 @@
 
 #define True 		1
 #define False 		0
-#define NOLUG		10
-#define COMPL		8
-#define STDBY		6
 #define ALU			4 //Puestos 4 y 5 corresponden a ALU
 #define DOC			2 //Puestos 2 y 3 corresponden a DOC
 #define DISC		0 //Puestos 0 y 1 corresponden a DISC
+#define DISC1		"47CAA7F4"
+#define DISC2		"DC13433C"
+#define DOC1		"CCAB423C"
+#define DOC2		"5C82443C"
+#define ALU1		"8AAA6032"
+#define ALU2		"47CAA7F4"
 
-int flag;
-int pulse;
+
+
 int puesto[6];
 long tim;
 char nuevo_ID[8]={0,0,0,0,0,0,0,0};
+char extra_ID[8]={0,0,0,0,0,0,0,0};
 
 void delay(int);
 void CerrarBarrera();
@@ -43,17 +47,19 @@ void AbrirBarrera();
 void RefrescarSensores();
 void RefrescarLuces();
 void MostrarMensajeStdBy();
+void MostrarMensajeNoVal();
+void MostrarMensajeNoLug();
 void MostrarMensaje(int);
-int BuscarLugar(int);
+int  BuscarLugar(int);
 void Iluminar(int);
 void LeeTarjeta();
 
 
 
-int main(void) {
+void main(void) {
 
 	// Inicializamos la placa
-		Board_Init();
+	Board_Init();
 
 	/*	===================================================================*
 	 *	Configuramos los pines que vamos a utilizar para nuestra aplicación*
@@ -67,21 +73,18 @@ int main(void) {
 	 * 	RS p2.0 (J6-42)
 	 * 	EN p2.1 (J6-43)	 												*/
 	/* Configuración de las entradas */
-	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 18);
-	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 15);
-	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 16);
-	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 23);
-	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 24);
-	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 25);
-	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 26);
-	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 13);
-
-	/* Configuración de la interrupción por flanco descendente */
-	Chip_GPIOINT_SetIntFalling(LPC_GPIOINT, GPIOINT_PORT0, 1 << 18);
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 18); // (J6-11) Interrupcion externa
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 15); // (J6-13)
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 16); // (J6-14)
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 23); // (J6-15)
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 24); // (J6-16)
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 25); // (J6-17)
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 0, 26); // (J6-18)
+	Chip_GPIO_SetPinDIRInput(LPC_GPIO, 2, 13); // (J6-27)
 
 	/* Configuración de las GPIO como salidas
-	 *P0[2],	*P0[3],	 	*P0[21],	*P0[22],	*P0[27],	*P0[28] 	LED VERDES
-	 *P0[4],	*P0[5],		*P0[10], 	*P0[11], 	*P1[30], 	*P1[31]		LED ROJOS
+	 *P0[2](J6-21),		*P0[3](J6-22),	 	*P0[21](J6-23),		*P0[22](J6-24),		*P0[27](J6-25),		*P0[28](J6-26) 	LED VERDES
+	 *P0[4](J6-38),		*P0[5](J6-39),		*P0[10](J6-40), 	*P0[11](J6-41), 	*P1[30](J6-19), 	*P1[31](J6-20)	LED ROJOS
 	 */
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 1, 30);
 	Chip_GPIO_SetPinOutHigh(LPC_GPIO, 1, 30);
@@ -114,15 +117,17 @@ int main(void) {
 	 *	Habilitamos las interrupciones e inicializamos el display			*
 	 *	===================================================================	*/
 
+	/* Configuración de la interrupción por flanco descendente */
+	Chip_GPIOINT_SetIntFalling(LPC_GPIOINT, GPIOINT_PORT0, 1 << 18);
 	/* Habilitación de las interrupciones de los GPIO en el NVIC */
 	NVIC_ClearPendingIRQ(EINT3_IRQn);
 	NVIC_EnableIRQ(EINT3_IRQn);
 	// Inicializamos el display y actualizamos el valor del clock
-	LCD_Init();
-	LCD_Tim1DeInit();
 	SystemCoreClockUpdate();
 	SysTick_Config(SystemCoreClock / 1000);
-	LCD_Tim1Init();
+	LCD_Init();
+//	LCD_Tim1DeInit();
+//	LCD_Tim1Init();
 	LCD_SendInstruction(LCD_DISPLAY_CLEAR);
 
 	// Defino las variables a utilizar
@@ -136,50 +141,57 @@ int main(void) {
 	RefrescarLuces();
 	MostrarMensajeStdBy();
 
-while (1){
+	while (1){
 
-	for(int i=0;i<8;i++){
-		anterior_ID[i]=nuevo_ID[i];
+		for(int i=0;i<8;i++){
+			anterior_ID[i]=nuevo_ID[i];
+		}
+
+		LeeTarjeta();
+		if(strcmp(anterior_ID,nuevo_ID)!=0){
+
+			if((strcmp(nuevo_ID, DISC1)==0)||(strcmp(nuevo_ID, DISC2)==0)){		//ID correspondiente a un discapacitado
+				RefrescarSensores();
+				estaLibre=BuscarLugar(DISC);
+				if (estaLibre!=10){
+					MostrarMensaje(estaLibre);
+					AbrirBarrera();
+					Iluminar(estaLibre);
+					MostrarMensajeStdBy();
+				}else {
+					MostrarMensajeNoLug();
+				}
+			}else {
+				if((strcmp(nuevo_ID, DOC1)==0)||(strcmp(nuevo_ID, DOC2)==0)){		//ID correspondiente a un docente
+					RefrescarSensores();
+					estaLibre=BuscarLugar(DOC);
+					if (estaLibre!=10){
+						MostrarMensaje(estaLibre);
+						AbrirBarrera();
+						Iluminar(estaLibre);
+						MostrarMensajeStdBy();
+					}else {
+						MostrarMensajeNoLug();
+					}
+				}else {
+					if((strcmp(nuevo_ID, ALU1)==0)||(strcmp(nuevo_ID, extra_ID)==0)){		//ID correspondiente a un alumno
+						RefrescarSensores();
+						estaLibre=BuscarLugar(ALU);
+						if (estaLibre!=10){
+							MostrarMensaje(estaLibre);
+							AbrirBarrera();
+							Iluminar(estaLibre);
+							MostrarMensajeStdBy();
+						}else {
+							MostrarMensajeNoLug();
+						}
+					} else {
+						MostrarMensajeNoVal();
+					}
+				}
+			}
+		}
 	}
-
-	LeeTarjeta();
-	if(strcmp(anterior_ID,nuevo_ID)!=0){
-
-		if((strcmp(nuevo_ID, "47CAA7F4")==0)||(strcmp(nuevo_ID, "DC13433C")==0)){		//ID correspondiente a un discapacitado
-			RefrescarSensores();
-			estaLibre=BuscarLugar(DISC);
-			if (estaLibre!=10){
-				MostrarMensaje(estaLibre);
-				AbrirBarrera();
-				Iluminar(estaLibre);
-				MostrarMensajeStdBy();
-			}
-		}
-		if((strcmp(nuevo_ID, "CCAB423C")==0)||(strcmp(nuevo_ID, "5C82443C")==0)){		//ID correspondiente a un docente
-			RefrescarSensores();
-			estaLibre=BuscarLugar(DOC);
-			if (estaLibre!=10){
-				MostrarMensaje(estaLibre);
-				AbrirBarrera();
-				Iluminar(estaLibre);
-				MostrarMensajeStdBy();
-			}
-		}
-		if(strcmp(nuevo_ID, "8AAA6032")==0){		//ID correspondiente a un alumno
-			RefrescarSensores();
-			estaLibre=BuscarLugar(ALU);
-			if (estaLibre!=10){
-				MostrarMensaje(estaLibre);
-				AbrirBarrera();
-				Iluminar(estaLibre);
-				MostrarMensajeStdBy();
-			}
-		}
-	}
-
-}
-
-
 }
 
 	/*	===================================================================	*
@@ -195,11 +207,23 @@ void delay(int time){
 
 void EINT3_IRQHandler (void)
 {
-	/* Toggleo el LED si hubo un flanco descendente en el GPIO P0.18 */
 	if (Chip_GPIOINT_GetStatusFalling(LPC_GPIOINT, GPIOINT_PORT0) && (1 << 18)) {
 		Chip_GPIOINT_ClearIntStatus(LPC_GPIOINT, GPIOINT_PORT0, 1 << 18);
-		pulse++;
-		flag=1;}
+		LCD_SendInstruction(LCD_DISPLAY_CLEAR);
+		LCD_GoToxy(0,0);
+		LCD_Print("  APROXIME UNA");
+		LCD_GoToxy(1, 0);
+		LCD_Print(" NUEVA TARJETA");
+		LeeTarjeta();
+		for(int i=0;i<8;i++){
+			extra_ID[i]=nuevo_ID[i];
+		}
+		LCD_SendInstruction(LCD_DISPLAY_CLEAR);
+		LCD_GoToxy(0,0);
+		LCD_Print("TARJETA AGREGADA");
+		delay(3000);
+		MostrarMensajeStdBy();
+	}
 }
 
 void CerrarBarrera(){
@@ -225,7 +249,7 @@ void AbrirBarrera(){
 }
 void RefrescarSensores(){
 
-	puesto[0]= Chip_GPIO_GetPinState(LPC_GPIO, 0, 15);
+	puesto[0]= Chip_GPIO_GetPinState(LPC_GPIO, 0, 15); //
 	puesto[1]= Chip_GPIO_GetPinState(LPC_GPIO, 0, 16);
 	puesto[2]= Chip_GPIO_GetPinState(LPC_GPIO, 0, 23);
 	puesto[3]= Chip_GPIO_GetPinState(LPC_GPIO, 0, 24);
@@ -285,18 +309,31 @@ void RefrescarLuces(){
 }
 
 void MostrarMensajeStdBy(){
-
-	int libres=0;
-	for (int i=0;i<6;i++){
-		if (puesto[i]){
-			libres++;
-		}
-	}
 	LCD_SendInstruction(LCD_DISPLAY_CLEAR);
 	LCD_GoToxy(0,0);
-	LCD_Print(" HAY LUGARES:");
-	LCD_GoToxy(0, 15);
-	LCD_SendChar((char)libres);
+	LCD_Print(" BIENVENIDO AL");
+	LCD_GoToxy(1, 0);
+	LCD_Print(" ESTACIONAMIENTO");
+}
+
+void MostrarMensajeNoVal(){
+	LCD_SendInstruction(LCD_DISPLAY_CLEAR);
+	LCD_GoToxy(0,0);
+	LCD_Print("TARJETA INVALIDA");
+	delay(3000);
+	LCD_GoToxy(0,0);
+	LCD_Print("  APROXIME UNA");
+	LCD_GoToxy(1, 0);
+	LCD_Print(" TARJETA VALIDA");
+}
+
+void MostrarMensajeNoLug(){
+	LCD_SendInstruction(LCD_DISPLAY_CLEAR);
+		LCD_GoToxy(0,0);
+		LCD_Print("  NO HAY LUGAR");
+		LCD_GoToxy(1, 0);
+		LCD_Print("   PARA USTED");
+		delay(3000);
 }
 
 void MostrarMensaje(int lugar){
@@ -386,6 +423,7 @@ void LeeTarjeta( ){
 
 	int i;
 	uart_init(9600);
+
 	for(i=0;i<9;i++)
 		nuevo_ID[i]=uart_RxChar();
 	delay(10);
