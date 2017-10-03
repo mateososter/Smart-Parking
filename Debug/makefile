@@ -30,7 +30,7 @@ all: Estacionamiento.axf
 Estacionamiento.axf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU Linker'
-	arm-none-eabi-gcc -nostdlib -L"C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\CMSIS_CORE_LPC17xx\Debug" -L"C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\libLCD\Debug" -L"C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_board_nxp_lpcxpresso_1769\Debug" -L"C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_chip_175x_6x\Debug" -Xlinker -Map="Estacionamiento.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -mcpu=cortex-m3 -mthumb -T "Estacionamiento_Debug.ld" -o "Estacionamiento.axf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-gcc -nostdlib -L"C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\CMSIS_CORE_LPC17xx\Debug" -L"C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_board_nxp_lpcxpresso_1769\Debug" -L"C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_chip_175x_6x\Debug" -Xlinker -Map="Estacionamiento.map" -Xlinker --gc-sections -Xlinker -print-memory-usage -mcpu=cortex-m3 -mthumb -T "Estacionamiento_Debug.ld" -o "Estacionamiento.axf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build

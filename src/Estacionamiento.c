@@ -38,8 +38,8 @@
 
 int puesto[6];
 long tim;
-char nuevo_ID[8]={0,0,0,0,0,0,0,0};
-char extra_ID[8]={0,0,0,0,0,0,0,0};
+char nuevo_ID[9]={0,0,0,0,0,0,0,0,'\0'};
+char extra_ID[9]={0,0,0,0,0,0,0,0,'\0'};
 
 void delay(int);
 void CerrarBarrera();
@@ -133,7 +133,7 @@ void main(void) {
 	// Defino las variables a utilizar
 
 	int estaLibre=0;
-	char anterior_ID[8];
+	char anterior_ID[9];
 
 
 	CerrarBarrera();
@@ -143,7 +143,7 @@ void main(void) {
 
 	while (1){
 
-		for(int i=0;i<8;i++){
+		for(int i=0;i<9;i++){
 			anterior_ID[i]=nuevo_ID[i];
 		}
 
@@ -421,10 +421,9 @@ void Iluminar(int lugar){
 }
 void LeeTarjeta( ){
 
-	int i;
 	uart_init(9600);
 
-	for(i=0;i<9;i++)
+	for(int i=0;i<8;i++)
 		nuevo_ID[i]=uart_RxChar();
 	delay(10);
 }

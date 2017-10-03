@@ -27,8 +27,7 @@ void InitPWM()
 	// set PWM cycle - uso 200 porque a 10kHz, 200 ciclos tardan 20ms
 	LPC_PWM1->MR0 = ENDPWMVAL;
 	//Debe cambiar a 1,5ms entonces...
-	LPC_PWM1->MR3 = 15;
-	//Load Shadow register content
+	LPC_PWM1->MR3 = 15;	//Load Shadow register content
 	//Latch Enable Register, si los valores de los MR cambian durante la ejecución, no se actualizan si no están habilitados en el LER
 	LPC_PWM1->LER = LER3_EN;
 	//Enable PWM outputs

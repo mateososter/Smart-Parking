@@ -1,4 +1,5 @@
-src/Estacionamiento.o src/Estacionamiento.d: ../src/Estacionamiento.c \
+inc/lcd.o inc/lcd.d: ../inc/lcd.c \
+ C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_board_nxp_lpcxpresso_1769\inc/board.h \
  C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_chip_175x_6x\inc/chip.h \
  C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_chip_175x_6x\inc/lpc_types.h \
  C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_chip_175x_6x\inc/sys_config.h \
@@ -36,19 +37,13 @@ src/Estacionamiento.o src/Estacionamiento.d: ../src/Estacionamiento.c \
  C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_chip_175x_6x\inc/romapi_17xx_40xx.h \
  C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_chip_175x_6x\inc/iap.h \
  C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_chip_175x_6x\inc/error.h \
- C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_board_nxp_lpcxpresso_1769\inc/board.h \
  C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_board_nxp_lpcxpresso_1769\inc/board_api.h \
  C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_chip_175x_6x\inc/lpc_types.h \
  C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_board_nxp_lpcxpresso_1769\inc/lpc_phy.h \
  C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_board_nxp_lpcxpresso_1769\inc/board.h \
- C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\CMSIS_CORE_LPC17xx\inc/LPC17xx.h \
- C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\CMSIS_CORE_LPC17xx\inc/core_cm3.h \
- C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\CMSIS_CORE_LPC17xx\inc/system_LPC17xx.h \
- C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\Estacionamiento\inc/lcd.h \
- C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\Estacionamiento\inc/pwm.h \
- C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\Estacionamiento\inc/uart.h \
- C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\CMSIS_CORE_LPC17xx\inc/lpc17xx.h \
- C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\Estacionamiento\inc/stdutils.h
+ ../inc/lcd.h
+
+C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_board_nxp_lpcxpresso_1769\inc/board.h:
 
 C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_chip_175x_6x\inc/chip.h:
 
@@ -124,8 +119,6 @@ C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_chip_175x_6x\inc/
 
 C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_chip_175x_6x\inc/error.h:
 
-C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_board_nxp_lpcxpresso_1769\inc/board.h:
-
 C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_board_nxp_lpcxpresso_1769\inc/board_api.h:
 
 C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_chip_175x_6x\inc/lpc_types.h:
@@ -134,18 +127,4 @@ C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_board_nxp_lpcxpre
 
 C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\lpc_board_nxp_lpcxpresso_1769\inc/board.h:
 
-C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\CMSIS_CORE_LPC17xx\inc/LPC17xx.h:
-
-C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\CMSIS_CORE_LPC17xx\inc/core_cm3.h:
-
-C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\CMSIS_CORE_LPC17xx\inc/system_LPC17xx.h:
-
-C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\Estacionamiento\inc/lcd.h:
-
-C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\Estacionamiento\inc/pwm.h:
-
-C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\Estacionamiento\inc/uart.h:
-
-C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\CMSIS_CORE_LPC17xx\inc/lpc17xx.h:
-
-C:\Users\Home\Documents\MCUXpressoIDE_10.0.0_344\workspace\Estacionamiento\inc/stdutils.h:
+../inc/lcd.h:
