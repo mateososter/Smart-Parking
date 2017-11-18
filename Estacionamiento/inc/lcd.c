@@ -136,7 +136,7 @@ void LCD_usDelay(uint32_t usec)
 	Chip_TIMER_Reset(LPC_TIMER1);
 	Chip_TIMER_Enable(LPC_TIMER1);
 
-	while (!usTicks);
+	while (!usTicks){	}
 	usTicks = 0;
 
 	Chip_TIMER_Disable(LPC_TIMER1);

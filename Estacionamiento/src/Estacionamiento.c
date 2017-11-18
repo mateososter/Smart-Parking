@@ -60,7 +60,6 @@ void main(void) {
 
 	// Inicializamos la placa
 	Board_Init();
-
 	/*	===================================================================*
 	 *	Configuramos los pines que vamos a utilizar para nuestra aplicación*
 	 *	===================================================================*/
@@ -120,14 +119,14 @@ void main(void) {
 	/* Configuración de la interrupción por flanco descendente */
 	Chip_GPIOINT_SetIntFalling(LPC_GPIOINT, GPIOINT_PORT0, 1 << 18);
 	/* Habilitación de las interrupciones de los GPIO en el NVIC */
-	NVIC_ClearPendingIRQ(EINT3_IRQn);
-	NVIC_EnableIRQ(EINT3_IRQn);
+//	NVIC_ClearPendingIRQ(EINT3_IRQn);
+//	NVIC_EnableIRQ(EINT3_IRQn);
 	// Inicializamos el display y actualizamos el valor del clock
 	SystemCoreClockUpdate();
 	SysTick_Config(SystemCoreClock / 1000);
 	LCD_Init();
-//	LCD_Tim1DeInit();
-//	LCD_Tim1Init();
+	LCD_Tim1DeInit();
+	LCD_Tim1Init();
 	LCD_SendInstruction(LCD_DISPLAY_CLEAR);
 
 	// Defino las variables a utilizar
