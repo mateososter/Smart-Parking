@@ -309,6 +309,8 @@ void RefrescarLuces(){
 }
 
 void MostrarMensajeStdBy(){
+	LCD_Tim1DeInit();
+	LCD_Tim1Init();
 	LCD_SendInstruction(LCD_DISPLAY_CLEAR);
 	LCD_GoToxy(0,0);
 	LCD_Print(" BIENVENIDO AL");
@@ -317,6 +319,8 @@ void MostrarMensajeStdBy(){
 }
 
 void MostrarMensajeNoVal(){
+	LCD_Tim1DeInit();
+	LCD_Tim1Init();
 	LCD_SendInstruction(LCD_DISPLAY_CLEAR);
 	LCD_GoToxy(0,0);
 	LCD_Print("TARJETA INVALIDA");
@@ -328,15 +332,19 @@ void MostrarMensajeNoVal(){
 }
 
 void MostrarMensajeNoLug(){
+	LCD_Tim1DeInit();
+	LCD_Tim1Init();
 	LCD_SendInstruction(LCD_DISPLAY_CLEAR);
-		LCD_GoToxy(0,0);
-		LCD_Print("  NO HAY LUGAR");
-		LCD_GoToxy(1,0);
-		LCD_Print("   PARA USTED");
-		delay(3000);
+	LCD_GoToxy(0,0);
+	LCD_Print("  NO HAY LUGAR");
+	LCD_GoToxy(1,0);
+	LCD_Print("   PARA USTED");
+	delay(3000);
 }
 
 void MostrarMensaje(int lugar){
+	LCD_Tim1DeInit();
+	LCD_Tim1Init();
 
 	if (lugar<=5) {
 		LCD_SendInstruction(LCD_DISPLAY_CLEAR);
