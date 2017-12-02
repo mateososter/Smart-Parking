@@ -155,7 +155,7 @@ void LCD_Tim1Init(void)
 	Chip_TIMER_StopOnMatchDisable(LPC_TIMER1, 0);
 
 	Chip_TIMER_SetMatch(LPC_TIMER1, 0, 1000);
-
+	NVIC_SetPriority(TIMER1_IRQn, 2);
 	NVIC_EnableIRQ(TIMER1_IRQn);
 }
 

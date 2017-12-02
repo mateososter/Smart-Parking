@@ -101,8 +101,6 @@ void main(void) {
 	Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 27);
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 28);
 	Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 28);
-	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 2, 13);
-	Chip_GPIO_SetPinOutHigh(LPC_GPIO, 2, 13);
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 4);
 	Chip_GPIO_SetPinOutHigh(LPC_GPIO, 0, 4);
 	Chip_GPIO_SetPinDIROutput(LPC_GPIO, 0, 5);
@@ -232,7 +230,7 @@ void CerrarBarrera(){
 
 void AbrirBarrera(){
 	int sensorBarrera;
-	SetPWM(20);
+	SetPWM(15);
 	sensorBarrera= Chip_GPIO_GetPinState(LPC_GPIO, 2, 13);
 	while(sensorBarrera==1){
 		delay(500);
@@ -244,7 +242,7 @@ void AbrirBarrera(){
 	}
 
 	delay(500);
-	SetPWM(15);
+	SetPWM(20);
 
 }
 void RefrescarSensores(){
@@ -343,9 +341,9 @@ void MostrarMensajeNoLug(){
 }
 
 void MostrarMensaje(int lugar){
-	LCD_Tim1DeInit();
-	LCD_Tim1Init();
 
+//	LCD_Tim1DeInit();
+	LCD_Tim1Init();
 	if (lugar<=5) {
 		LCD_SendInstruction(LCD_DISPLAY_CLEAR);
 		LCD_GoToxy(0,0);
