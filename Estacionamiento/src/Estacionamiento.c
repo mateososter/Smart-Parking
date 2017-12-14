@@ -136,13 +136,14 @@ void main(void) {
 	CerrarBarrera();
 	RefrescarSensores();
 	RefrescarLuces();
-	MostrarMensajeStdBy();
 
 	while (1){
 
 		for(int i=0;i<9;i++){
 			anterior_ID[i]=nuevo_ID[i];
 		}
+
+		MostrarMensajeStdBy();
 
 		LeeTarjeta();
 		if(strcmp(anterior_ID,nuevo_ID)!=0){
@@ -157,6 +158,7 @@ void main(void) {
 					MostrarMensajeStdBy();
 				}else {
 					MostrarMensajeNoLug();
+					delay(3000);
 				}
 			}else {
 				if((strcmp(nuevo_ID, DOC1)==0)||(strcmp(nuevo_ID, DOC2)==0)){		//ID correspondiente a un docente
@@ -169,6 +171,7 @@ void main(void) {
 						MostrarMensajeStdBy();
 					}else {
 						MostrarMensajeNoLug();
+						delay(3000);
 					}
 				}else {
 					if((strcmp(nuevo_ID, ALU1)==0)||(strcmp(nuevo_ID, extra_ID)==0)){		//ID correspondiente a un alumno
@@ -181,9 +184,11 @@ void main(void) {
 							MostrarMensajeStdBy();
 						}else {
 							MostrarMensajeNoLug();
+							delay(3000);
 						}
 					} else {
 						MostrarMensajeNoVal();
+						delay(3000);
 					}
 				}
 			}
@@ -247,7 +252,7 @@ void AbrirBarrera(){
 }
 void RefrescarSensores(){
 
-	puesto[0]= Chip_GPIO_GetPinState(LPC_GPIO, 0, 15); //
+	puesto[0]= Chip_GPIO_GetPinState(LPC_GPIO, 0, 15); // Si está en 1 está libre. 0 ocupado.
 	puesto[1]= Chip_GPIO_GetPinState(LPC_GPIO, 0, 16);
 	puesto[2]= Chip_GPIO_GetPinState(LPC_GPIO, 0, 23);
 	puesto[3]= Chip_GPIO_GetPinState(LPC_GPIO, 0, 24);
@@ -369,8 +374,8 @@ int BuscarLugar(int condicion){
 		i=4; //A partir del 4 quedan para los alumnos
 		break;
 	}
-	while(lugar==10||i<6){		//i<6 para que de una vuelta por el vector y salga. lugar=10 para que cuando encuentre el primer valor salga.
-		if(puesto[i]&&lugar==10){
+	while(lugar==10 && i<6){		//i<6 para que de una vuelta por el vector y salga. lugar=10 para que cuando encuentre el primer valor salga.
+		if(puesto[i] && lugar==10){
 			lugar=i;
 		} else {
 			i++;
