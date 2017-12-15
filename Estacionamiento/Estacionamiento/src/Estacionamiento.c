@@ -32,7 +32,7 @@
 #define DOC1		"CCAB423C"
 #define DOC2		"5C82443C"
 #define ALU1		"8AAA6032"
-#define ALU2		"47CAA7F4"
+#define ALU2		"43CA7EF7"
 
 
 
@@ -195,6 +195,8 @@ void main(void) {
 					}
 				}
 			}
+		} else {
+			delay(500);
 		}
 	}
 }
@@ -315,7 +317,7 @@ void RefrescarLuces(){
 }
 
 void MostrarMensajeStdBy(){
-	LCD_Tim1DeInit();
+//	LCD_Tim1DeInit();
 	LCD_Tim1Init();
 	LCD_SendInstruction(LCD_DISPLAY_CLEAR);
 	LCD_GoToxy(0,0);
@@ -332,6 +334,7 @@ void MostrarMensajeNoVal(){
 	LCD_Print("TARJETA INVALIDA");
 	delay(3000);
 	LCD_GoToxy(0,0);
+	LCD_SendInstruction(LCD_DISPLAY_CLEAR);
 	LCD_Print("  APROXIME UNA");
 	LCD_GoToxy(0,1);
 	LCD_Print(" TARJETA VALIDA");
@@ -359,7 +362,7 @@ void MostrarMensaje(int lugar){
 		LCD_GoToxy(0,1);
 		LCD_Print("PASE AL LUGAR:");
 		LCD_GoToxy(1, 15);
-		LCD_SendChar((char)lugar);
+		LCD_SendChar(lugar + 49);
 	}
 }
 
